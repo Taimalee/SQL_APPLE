@@ -1,0 +1,27 @@
+product_id,product_name,Price,Cogs,category_id
+001,iPhone 14,1808,1444,001
+002,iPhone 14 Pro,448,375,001
+003,iPhone 14 Pro Max,937,684,001
+004,iPhone SE,1746,1394,001
+005,MacBook Air,883,704,002
+006,MacBook Pro,705,329,002
+007,iMac,644,243,002
+008,Mac Mini,1554,1056,002
+009,Mac Studio,559,152,002
+010,iPad,1645,1156,003
+011,iPad Pro,129,98,003
+012,iPad Air,1319,1284,003
+013,iPad Mini,756,423,003
+014,Apple Watch Series 8,536,313,004
+015,Apple Watch SE,336,83,004
+016,Apple Watch Ultra,596,470,004
+017,Apple Music,744,565,005
+018,iCloud Storage,400,86,005
+019,Apple TV+,1134,956,005
+020,Apple Arcade,684,329,005
+021,Apple Fitness+,707,306,005
+022,AirPods Pro,1167,1129,006
+023,AirPods Max,744,323,006
+024,Magic Keyboard,545,92,006
+025,Magic Mouse,470,334,006
+026,MagSafe Charger,1295,1210,006
