@@ -99,6 +99,13 @@ restock_date DATE,
 CONSTRAINT product_fk_in_inventory FOREIGN KEY (product_id) REFERENCES products(product_id)
 );
 
+-- END OF SCHEMAS
+
+
+
+
+
+
 
 
 
