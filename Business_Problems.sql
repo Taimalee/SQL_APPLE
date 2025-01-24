@@ -82,7 +82,7 @@ FROM products as p
 JOIN order_items as oi ON p.product_id = oi.product_id
 JOIN categories as c ON p.category_id = c.category_id
 GROUP BY c.category_name, c.category_id
-ORDER BY Total_Revenue DESC
+ORDER BY Total_Revenue DESC;
 
 
 
@@ -91,6 +91,8 @@ Question 3: Average Order Value (AOV)
 			Calculate the average order value for each customer. 
 Challenge: 	Include only customers with more than 100 orders.
 */
+
+
 
 SELECT 
 	cs.customer_id as Customer_id,
@@ -103,12 +105,60 @@ JOIN customers as cs ON o.customer_id =cs.customer_id
 JOIN order_items as oi ON o.order_id = oi.order_id
 GROUP BY 1,2
 HAVING COUNT (DISTINCT(o.order_id))  > 35
-ORDER BY AOV DESC
+ORDER BY AOV DESC;
 
 
 
 /*
-Question 4: 
+Question 4: Monthly Sales Trend
+			Query monthly total sales over the past year. 
+Challenge: 	Display the sales trend, grouping by month, 
+			return current month sales, last month sales.
+*/
+
+
+
+SELECT 	
+	year,
+	month,
+	total_sale as current_month_sale,
+	LAG(total_sale, 1) OVER(ORDER BY year, month) as last_month_sale
+	
+FROM
+	(
+	SELECT 
+	EXTRACT(MONTH FROM o.order_date) as month, 
+	EXTRACT(YEAR FROM o.order_date) as year,
+	TO_CHAR(SUM(oi.total_price), 'FM999,999,999.00') as total_sale
+
+	FROM orders as o
+JOIN order_items as oi ON o.order_id = oi.order_id
+WHERE o.order_date >= CURRENT_DATE - INTERVAL '1 year'
+GROUP BY 1,2
+ORDER BY year, month 
+) as MST_
+
+
+
+/*
+Question 5: Customers with No Purchases
+			Find cusotmers in our database who have never placed an order.
+Challenge: 	Include customer details.
+*/
+
+
+
+SELECT * FROM customers
+WHERE customer_id NOT IN 
+	(
+	SELECT DISTINCT(customer_id) 
+	FROM orders
+	);
+
+
+
+/*
+Question 6: 
 			Query the top 10 products by total sales value. 
 Challenge: 	Include product name, total quantity sold, and total sales value.
 */
@@ -118,16 +168,3 @@ Challenge: 	Include product name, total quantity sold, and total sales value.
 
 
 
-
-
-
-
-
-
-
-
-/*
-Question 5: 
-			Query the top 10 products by total sales value. 
-Challenge: 	Include product name, total quantity sold, and total sales value.
-*/
