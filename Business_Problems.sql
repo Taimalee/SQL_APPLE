@@ -125,17 +125,17 @@ SELECT
 	LAG(total_sale, 1) OVER(ORDER BY year, month) as last_month_sale
 	
 FROM
-	(
+(
 	SELECT 
 	EXTRACT(MONTH FROM o.order_date) as month, 
 	EXTRACT(YEAR FROM o.order_date) as year,
 	TO_CHAR(SUM(oi.total_price), 'FM999,999,999.00') as total_sale
 
 	FROM orders as o
-JOIN order_items as oi ON o.order_id = oi.order_id
-WHERE o.order_date >= CURRENT_DATE - INTERVAL '1 year'
-GROUP BY 1,2
-ORDER BY year, month 
+	JOIN order_items as oi ON o.order_id = oi.order_id
+	WHERE o.order_date >= CURRENT_DATE - INTERVAL '1 year'
+	GROUP BY 1,2
+	ORDER BY year, month 
 ) as MST_
 
 
@@ -148,20 +148,70 @@ Challenge: 	Include customer details.
 
 
 
-SELECT * FROM customers
+SELECT * 
+FROM customers
 WHERE customer_id NOT IN 
 	(
 	SELECT DISTINCT(customer_id) 
 	FROM orders
 	);
 
+	
+
+/*
+Question 6: Top-Selling Province for Each Category
+			Identify the top-selling province for each product category. 
+Challenge: 	Include the total sales for that category within the province.
+*/
+
+
+
+WITH rank_table
+AS
+	(
+	SELECT 
+		cs.province, 
+		c.category_name,
+		TO_CHAR(SUM(oi.total_price), 'FM999,999,999,999.00') as Total_sales,
+		RANK() OVER(PARTITION BY c.category_name ORDER BY 
+		TO_CHAR(SUM(oi.total_price), 'FM999,999,999,999.00') DESC) as rank
+	FROM orders as o
+	JOIN customers as cs ON o.customer_id = cs.customer_id
+	JOIN order_items as oi ON o.order_id = oi.order_id
+	JOIN products as p ON p.product_id = oi.product_id
+	JOIN categories c ON p.category_id = c.category_id
+	WHERE o.order_status = 'completed'
+	GROUP BY 1,2
+	)
+	
+SELECT * 
+FROM rank_table
+WHERE rank = 1
+
 
 
 /*
-Question 6: 
-			Query the top 10 products by total sales value. 
-Challenge: 	Include product name, total quantity sold, and total sales value.
+Question 6: Best Selling Category by State
+			Identify the best-selling product category for each state. 
+Challenge: 	Include the total sales for that category within each state.
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
