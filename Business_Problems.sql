@@ -285,21 +285,49 @@ GROUP BY py.payment_status
 
 
 /*
-Question 11: Stored Procedure
-			Create a function as soon as the product is sold the same
-			quantity should be reduced from the inventory table. 
-Challenge: 	After adding any sales records it should update in the 
-			stock inventory table based on the product and quantity purchased.
+Question 11: Stored Procedure (Identify the Top Sellers by Sales Volume)
+			Identify the top N sellers (based on total sales volume) for a specified date range.
+Challenge: 	Create a stored procedure that accepts the start date, end date, 
+           	and number of top sellers (N) as input parameters. 
+           	Return the top N sellers along with their total sales volume 
+           	within the specified date range.
 */
 
 
 
+CREATE OR REPLACE FUNCTION get_top_sellers_by_sales
+	(
+    start_date DATE,
+    end_date DATE,
+    top_n INT
+	)
+RETURNS TABLE 
+	(
+    seller_id INT,
+    seller_name TEXT,
+    origin TEXT,
+   	total_sales TEXT
+	) AS $$
+	
+BEGIN
+    RETURN QUERY
+    SELECT 
+        s.seller_id,
+        s.seller_name::"text",
+        s.origin::"text",
+        TO_CHAR(SUM(oi.total_price)::NUMERIC, 'FM999,999,999.00') AS total_sales  
+    FROM sellers s
+    JOIN orders o ON s.seller_id = o.seller_id
+    JOIN order_items oi ON o.order_id = oi.order_id
+    WHERE o.order_date BETWEEN start_date AND end_date
+    GROUP BY s.seller_id, s.seller_name, s.origin
+    ORDER BY SUM(oi.total_price) DESC
+    LIMIT top_n;
+END;
+$$ LANGUAGE plpgsql;
 
+-- Call the Function
 
-
-
-
-
-
-
+SELECT * 
+FROM get_top_sellers_by_sales('2024-05-01', '2025-1-10', 10);
 
