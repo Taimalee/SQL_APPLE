@@ -89,7 +89,7 @@ ORDER BY Total_Revenue DESC;
 /*
 Question 3: Average Order Value (AOV)
 			Calculate the average order value for each customer. 
-Challenge: 	Include only customers with more than 100 orders.
+Challenge: 	Include only customers with more than 35 orders.
 */
 
 
@@ -143,7 +143,7 @@ FROM
 
 /*
 Question 5: Customers with No Purchases
-			Find cusotmers in our database who have never placed an order.
+			Find customers in our database who have never placed an order.
 Challenge: 	Include customer details.
 */
 
@@ -194,7 +194,7 @@ WHERE rank = 1;
 /*
 Question 7: Customer Lifetime Value (CLTV)
 			Calculate the total value of orders placed by each customer over their lifetime.
-Challenge: 	Rank customers based on their CLTV and displat the top 10
+Challenge: 	Rank customers based on their CLTV and display the top 10
 */
 
 
@@ -330,4 +330,6 @@ $$ LANGUAGE plpgsql;
 
 SELECT * 
 FROM get_top_sellers_by_sales('2024-05-01', '2025-1-10', 10);
+
+
 
