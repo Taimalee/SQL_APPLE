@@ -76,7 +76,7 @@ SELECT
 	TO_CHAR(SUM(oi.total_price), 'FM999,999,999,999.00') as Total_Revenue,
 	TO_CHAR(SUM(oi.total_price) / 
 			(SELECT SUM(total_price) FROM order_items) * 100, 'FM999,990.00%')
-			AS Percentage
+			as Percentage
 
 FROM products as p
 JOIN order_items as oi ON p.product_id = oi.product_id
@@ -98,7 +98,8 @@ SELECT
 	cs.customer_id as Customer_id,
 	CONCAT(cs.first_name, ' ',cs.last_name) as Customer,
 	COUNT (DISTINCT(o.order_id)) as num_orders,
-	TO_CHAR(SUM(oi.total_price)/COUNT(DISTINCT(o.order_id)), 'FM999,999,999,999.00') as AOV
+	TO_CHAR(SUM(oi.total_price)/
+	COUNT(DISTINCT(o.order_id)), 'FM999,999,999,999.00') as AOV
 	
 FROM orders as o
 JOIN customers as cs ON o.customer_id =cs.customer_id
@@ -186,26 +187,110 @@ AS
 	
 SELECT * 
 FROM rank_table
-WHERE rank = 1
+WHERE rank = 1;
 
 
 
 /*
-Question 6: Best Selling Category by State
-			Identify the best-selling product category for each state. 
-Challenge: 	Include the total sales for that category within each state.
+Question 7: Customer Lifetime Value (CLTV)
+			Calculate the total value of orders placed by each customer over their lifetime.
+Challenge: 	Rank customers based on their CLTV and displat the top 10
 */
 
 
 
+SELECT 
+	cs.customer_id as Customer_id,
+	CONCAT(cs.first_name, ' ',cs.last_name) as Customer,
+	cs.province,
+	TO_CHAR(SUM(oi.total_price), 'FM999,999,999,999.00') as CLTV,
+	DENSE_RANK() OVER(ORDER BY 
+	TO_CHAR(SUM(oi.total_price), 'FM999,999,999,999.00') DESC) as cs_rank
+	
+FROM orders as o
+JOIN customers as cs ON o.customer_id =cs.customer_id
+JOIN order_items as oi ON o.order_id = oi.order_id
+GROUP BY 1,2
+LIMIT 10;
 
 
 
+/*
+Question 8: Inventory Stock Alerts
+			Query products with stock levels below a certain threshold 
+			(e.g., less than 50 units).
+Challenge: 	Include the restock date and warehouse information
+*/
 
 
 
+SELECT 
+	i.inventory_id, 
+	i.stock_remaining, 
+	i.restock_date,
+	i.warehouse_id,
+	p.product_name
+
+FROM inventory as i
+JOIN products as p ON i.product_id = p.product_id
+WHERE i.stock_remaining < 50;
 
 
+
+/*
+Question 9: Shipping Information
+			Identify in-progress orders where the shipping date is later than 3 days
+			after the order date.
+Challenge: 	Include customer, order details, and delivery provider.
+*/
+
+
+
+SELECT 
+	cs.customer_id as Customer_id,
+	CONCAT(cs.first_name, ' ',cs.last_name) as Customer,
+	cs.province,
+	o.order_status,
+	o.order_date,
+	s.shipping_date,
+	s.shipping_provider
+
+FROM customers cs 
+JOIN orders o ON cs.customer_id = o.customer_id
+JOIN shipping s ON o.order_id = s.order_id
+WHERE s.shipping_date - order_date > 3 
+	AND o.order_status = 'inprogress';
+
+
+
+/*
+Question 10: Payment Success Rate
+			Calculate the percentage of successful payments across all orders.
+Challenge: 	Include breakdowns by payment status.
+*/
+
+
+
+SELECT 
+	py.payment_status, 
+	COUNT(*) as total_num,
+	TO_CHAR(COUNT(*)/
+		(SELECT COUNT(*)FROM payments)::"numeric" * 100, 'FM999,999,999.00%')
+		as percentage
+	
+FROM orders o
+JOIN payments py ON o.order_id = py.order_id
+GROUP BY py.payment_status
+
+
+
+/*
+Question 11: Stored Procedure
+			Create a function as soon as the product is sold the same
+			quantity should be reduced from the inventory table. 
+Challenge: 	After adding any sales records it should update in the 
+			stock inventory table based on the product and quantity purchased.
+*/
 
 
 
