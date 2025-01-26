@@ -285,8 +285,8 @@ GROUP BY py.payment_status
 
 
 /*
-Question 11: Stored Procedure (Identify the Top Sellers by Sales Volume)
-			Identify the top N sellers (based on total sales volume) for a specified date range.
+Question 11: Identify the Top Sellers by Sales Volume
+		Identify the top N sellers (based on total sales volume) for a specified date range.
 Challenge: 	Create a stored procedure that accepts the start date, end date, 
            	and number of top sellers (N) as input parameters. 
            	Return the top N sellers along with their total sales volume 
